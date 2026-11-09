@@ -1,0 +1,13 @@
+=== 所有 type 值 ===
+  type 0: 36426 个
+    CRPD_single: 粤D09908
+    CRPD_single: 粤DUU683
+  type 1: 6346 个
+    CRPD_single: 闽F65621
+    CRPD_single: 粤VN0961
+  type 2: 160 个
+    CRPD_single: 蒙G91547
+    CRPD_single: 蒙G73357
+  type 3: 433 个
+    CRPD_single: 粤DB558警
+    CRPD_single: 川A3627警

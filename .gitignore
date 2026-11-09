@@ -1,0 +1,90 @@
+# ================= Android / Gradle =================
+*.apk
+*.ap_
+*.dex
+*.class
+*.iml
+bin/
+gen/
+out/
+.gradle/
+build/
+local.properties
+proguard/
+.navigation/
+captures/
+.externalNativeBuild/
+google-services.json
+*.log
+
+# Android Studio / IntelliJ
+.idea/
+*.hprof
+
+# Signing material (kept locally, never committed)
+app/platform.keystore
+*.jks
+*.keystore
+
+# ================= Python =================
+__pycache__/
+*.py[cod]
+.venv/
+.venv_*/
+venv/
+.env
+.pytest_cache/
+.ipynb_checkpoints/
+
+# ================= Third-party PaddleOCR clone =================
+# 只提交自定义改动补丁，见 tools/paddleocr_custom/
+tools/PaddleOCR/
+
+# ================= Datasets / archives =================
+*.tar
+*.tar.gz
+*.tgz
+*.zip
+*.7z
+*.rar
+docs/CRPD_all.zip
+docs/CCPD2019/ccpd_base/
+docs/CCPD2019/ccpd_green_best10/
+docs/CRPD_all/CRPD_*/
+docs/synthetic_plates_100/
+docs/合成车牌100/
+
+# ================= Trained weights / inference outputs =================
+*.pdparams
+*.pdopt
+*.pdmodel
+*.pdiparams
+*.pdiparams.info
+models/pretrained/
+output/
+tools/models/
+gpu_server_*/pretrained/
+gpu_server_*/official_models/
+gpu_server_*/nb_out/
+gpu_server_*/opt_linux_x86
+gpu_server_plate_training_v2/paddle_lite_win_v2.12/
+gpu_server_plate_training_v2/paddle_lite_win_v2.12.zip
+
+# ================= Large docs / media =================
+docs/PP-OCRv6_*.tar
+docs/PP-OCRv6_*_infer/
+docs/gpu_result/
+docs/record/
+docs/test/
+docs/ppt_resources/
+docs/*.pptx
+docs/*.png
+docs/*.mp4
+docs/CRPD_all.zip
+
+# ================= Misc =================
+*.bak
+*.orig
+*.rej
+.DS_Store
+Thumbs.db

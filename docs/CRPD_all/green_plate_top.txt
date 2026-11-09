@@ -1,0 +1,102 @@
+=== 新能源绿牌候选 (精确规则) 共 5419 个, 按清晰度排序 ===
+
+--- 蓝(type0): 3640 个 ---
+  [CRPD_single] 贵GDK588     清晰度=23637  文件=59_0447.txt
+  [CRPD_single] 闽AFN699     清晰度=23041  文件=58_0403.txt
+  [CRPD_single] 藏BD3711     清晰度=23041  文件=62_0585.txt
+  [CRPD_double] 蒙D93W89     清晰度=22944  文件=55_0687.txt
+  [CRPD_single] 藏DC9058     清晰度=22792  文件=62_0117.txt
+  [CRPD_single] 豫D58F22     清晰度=22787  文件=40_0418.txt
+  [CRPD_single] 贵FD4448     清晰度=22434  文件=59_0347.txt
+  [CRPD_single] 鲁QF5T56     清晰度=22388  文件=46_0824.txt
+  [CRPD_single] 新AF4403     清晰度=22375  文件=47_0124.txt
+  [CRPD_single] 云D75754     清晰度=22204  文件=41_0293.txt
+  [CRPD_single] 苏ED3S12     清晰度=22190  文件=48_0711.txt
+  [CRPD_single] 吉BFN998     清晰度=22150  文件=57_0792.txt
+  [CRPD_single] 藏AF7898     清晰度=22123  文件=62_0583.txt
+  [CRPD_single] 黑GF0003     清晰度=22121  文件=43_0675.txt
+  [CRPD_single] 新FMM805     清晰度=22094  文件=47_0889.txt
+  [CRPD_single] 苏ED3S12     清晰度=22054  文件=48_0712.txt
+  [CRPD_single] 蒙BFN809     清晰度=22000  文件=55_0482.txt
+  [CRPD_double] 闽D3C297     清晰度=21947  文件=58_1157.txt
+  [CRPD_single] 闽AD621B     清晰度=21863  文件=58_1156.txt
+  [CRPD_single] 鄂FJ5T25     清晰度=21746  文件=51_0828.txt
+
+--- 黄单(type1): 1758 个 ---
+  [CRPD_single] 皖F29665     清晰度=21877  文件=45_1277.txt
+  [CRPD_single] 粤DT0849     清晰度=21279  文件=1 (815).txt
+  [CRPD_single] 皖F29665     清晰度=21164  文件=45_1274.txt
+  [CRPD_single] 吉CD0982     清晰度=20730  文件=57_0510.txt
+  [CRPD_single] 沪DE1607     清晰度=20700  文件=37_0564.txt
+  [CRPD_single] 陕DB0138     清晰度=20346  文件=56_0468.txt
+  [CRPD_single] 川F76425     清晰度=20209  文件=36_0572.txt
+  [CRPD_single] 沪DJ5361     清晰度=20100  文件=37_0189.txt
+  [CRPD_single] 沪DJ5312     清晰度=20100  文件=37_0193.txt
+  [CRPD_single] 粤D08727     清晰度=20076  文件=1 (170).txt
+  [CRPD_single] 粤DN2404     清晰度=19946  文件=1 (624).txt
+  [CRPD_single] 粤DN2505     清晰度=19908  文件=1 (525).txt
+  [CRPD_single] 皖NF3749     清晰度=19894  文件=45_0257.txt
+  [CRPD_single] 粤DN1688     清晰度=19880  文件=1 (553).txt
+  [CRPD_single] 粤D08727     清晰度=19838  文件=1 (166).txt
+  [CRPD_single] 粤DQ0288     清晰度=19831  文件=1 (767).txt
+  [CRPD_single] 粤D08870     清晰度=19823  文件=1 (174).txt
+  [CRPD_single] 粤D08727     清晰度=19769  文件=1 (164).txt
+  [CRPD_single] 粤DQ0288     清晰度=19756  文件=1 (792).txt
+  [CRPD_single] 粤DM1473     清晰度=19725  文件=1 (456).txt
+
+--- 黄双(type2): 20 个 ---
+  [CRPD_single] 川AF6608     清晰度=15703  文件=41_0091.txt
+  [CRPD_single] 渝D45433     清晰度=12767  文件=38_0212.txt
+  [CRPD_multi] 川AF1781     清晰度=12749  文件=43_0036.txt
+  [CRPD_double] 川FAA101     清晰度=12342  文件=51_1010.txt
+  [CRPD_double] 川FAA345     清晰度=12200  文件=59_0336.txt
+  [CRPD_double] 粤D10681     清晰度=10207  文件=1 (559).txt
+  [CRPD_multi] 川AD2683     清晰度=10139  文件=50_0125.txt
+  [CRPD_double] 川F91477     清晰度=9771  文件=64_0278.txt
+  [CRPD_double] 川AF5870     清晰度=9300  文件=39_0565.txt
+  [CRPD_single] 川FAA176     清晰度=9243  文件=53_0607.txt
+  [CRPD_double] 川AF7871     清晰度=9226  文件=64_0111.txt
+  [CRPD_single] 川FAA712     清晰度=8986  文件=40_0155.txt
+  [CRPD_single] 川F37077     清晰度=8870  文件=43_0018.txt
+  [CRPD_single] 川F50996     清晰度=8692  文件=53_0815.txt
+  [CRPD_single] 川F512D8     清晰度=7877  文件=50_0633.txt
+  [CRPD_single] 甘D9955字     清晰度=7622  文件=53_0791.txt
+  [CRPD_single] 川F62470     清晰度=7425  文件=45_0880.txt
+  [CRPD_double] 川F026A0     清晰度=7242  文件=61_0674.txt
+  [CRPD_double] 川AD3712     清晰度=6645  文件=61_0923.txt
+  [CRPD_multi] 川F38656     清晰度=6495  文件=47_0383.txt
+
+--- 白(type3): 1 个 ---
+  [CRPD_single] 川AD3278     清晰度=13631  文件=66_1741.txt
+
+=== 最清晰 Top 30 ===
+  [CRPD_single] 蓝(type0) 贵GDK588     清晰度=23637  59_0447.txt
+  [CRPD_single] 蓝(type0) 闽AFN699     清晰度=23041  58_0403.txt
+  [CRPD_single] 蓝(type0) 藏BD3711     清晰度=23041  62_0585.txt
+  [CRPD_double] 蓝(type0) 蒙D93W89     清晰度=22944  55_0687.txt
+  [CRPD_single] 蓝(type0) 藏DC9058     清晰度=22792  62_0117.txt
+  [CRPD_single] 蓝(type0) 豫D58F22     清晰度=22787  40_0418.txt
+  [CRPD_single] 蓝(type0) 贵FD4448     清晰度=22434  59_0347.txt
+  [CRPD_single] 蓝(type0) 鲁QF5T56     清晰度=22388  46_0824.txt
+  [CRPD_single] 蓝(type0) 新AF4403     清晰度=22375  47_0124.txt
+  [CRPD_single] 蓝(type0) 云D75754     清晰度=22204  41_0293.txt
+  [CRPD_single] 蓝(type0) 苏ED3S12     清晰度=22190  48_0711.txt
+  [CRPD_single] 蓝(type0) 吉BFN998     清晰度=22150  57_0792.txt
+  [CRPD_single] 蓝(type0) 藏AF7898     清晰度=22123  62_0583.txt
+  [CRPD_single] 蓝(type0) 黑GF0003     清晰度=22121  43_0675.txt
+  [CRPD_single] 蓝(type0) 新FMM805     清晰度=22094  47_0889.txt
+  [CRPD_single] 蓝(type0) 苏ED3S12     清晰度=22054  48_0712.txt
+  [CRPD_single] 蓝(type0) 蒙BFN809     清晰度=22000  55_0482.txt
+  [CRPD_double] 蓝(type0) 闽D3C297     清晰度=21947  58_1157.txt
+  [CRPD_single] 黄单(type1) 皖F29665     清晰度=21877  45_1277.txt
+  [CRPD_single] 蓝(type0) 闽AD621B     清晰度=21863  58_1156.txt
+  [CRPD_single] 蓝(type0) 鄂FJ5T25     清晰度=21746  51_0828.txt
+  [CRPD_single] 蓝(type0) 新FMM805     清晰度=21691  47_0887.txt
+  [CRPD_single] 蓝(type0) 闽DAT015     清晰度=21679  58_0198.txt
+  [CRPD_single] 蓝(type0) 冀FGS002     清晰度=21561  39_0728.txt
+  [CRPD_single] 蓝(type0) 闽D97008     清晰度=21499  58_0824.txt
+  [CRPD_single] 蓝(type0) 藏DJ3053     清晰度=21300  62_0057.txt
+  [CRPD_single] 黄单(type1) 粤DT0849     清晰度=21279  1 (815).txt
+  [CRPD_single] 黄单(type1) 皖F29665     清晰度=21164  45_1274.txt
+  [CRPD_single] 蓝(type0) 赣FC8781     清晰度=21067  50_0100.txt
+  [CRPD_single] 蓝(type0) 甘AD9898     清晰度=20999  53_0709.txt

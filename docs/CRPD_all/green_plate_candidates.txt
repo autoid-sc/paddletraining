@@ -1,0 +1,42 @@
+=== 新能源绿牌候选共 5618 个 ===
+
+--- 蓝(type0): 3810 个 ---
+  [CRPD_single/train] 粤D09908  (1 (229).txt)
+  [CRPD_single/train] 粤DUU683  (1 (383).txt)
+  [CRPD_single/train] 粤DYM003  (1 (547).txt)
+  [CRPD_single/train] 字DP8137  (1 (762).txt)
+  [CRPD_single/train] 粤D33108  (1 (836).txt)
+  [CRPD_single/train] 粤DP3460  (1 (845).txt)
+  [CRPD_single/train] 粤DM1328  (1 (888).txt)
+  [CRPD_single/train] 云CF0486  (35_0048.txt)
+  [CRPD_single/train] 川AF73X5  (35_0052.txt)
+  [CRPD_single/train] 京QDZ890  (35_0080.txt)
+--- 黄单(type1): 1787 个 ---
+  [CRPD_single/train] 闽F65621  (1 (1).txt)
+  [CRPD_single/train] 粤D52725  (1 (101).txt)
+  [CRPD_single/train] 粤D53249  (1 (102).txt)
+  [CRPD_single/train] 粤D53249  (1 (103).txt)
+  [CRPD_single/train] 粤D53249  (1 (104).txt)
+  [CRPD_single/train] 粤D54283  (1 (105).txt)
+  [CRPD_single/train] 粤D02604  (1 (112).txt)
+  [CRPD_single/train] 粤D02888  (1 (113).txt)
+  [CRPD_single/train] 粤D02888  (1 (114).txt)
+  [CRPD_single/train] 粤D02888  (1 (115).txt)
+--- 黄双(type2): 20 个 ---
+  [CRPD_single/train] 川FAA712  (40_0155.txt)
+  [CRPD_single/train] 川F37077  (43_0018.txt)
+  [CRPD_single/train] 川F62470  (45_0880.txt)
+  [CRPD_single/train] 川FAA176  (53_0607.txt)
+  [CRPD_single/train] 甘D9955字  (53_0791.txt)
+  [CRPD_single/train] 川F50996  (53_0815.txt)
+  [CRPD_single/val] 渝D45433  (38_0212.txt)
+  [CRPD_single/val] 川AF6608  (41_0091.txt)
+  [CRPD_single/val] 川F512D8  (50_0633.txt)
+  [CRPD_double/train] 粤D10681  (1 (559).txt)
+--- 白(type3): 1 个 ---
+  [CRPD_single/train] 川AD3278  (66_1741.txt)
+
+=== 子集分布 ===
+  CRPD_single: 4136
+  CRPD_double: 1146
+  CRPD_multi: 336

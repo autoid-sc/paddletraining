@@ -1,0 +1,33 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name">OCR悬浮框工具</string>
+    <string name="service_started" tools:ignore="MissingTranslation">服务运行中</string>
+
+    <string-array name="key_area_modes">
+        <item>不设置</item>
+        <item>左OCR右扫码</item>
+        <item>左扫码右OCR</item>
+    </string-array>
+
+    <string-array name="scan_types">
+        <item>摄像头</item>
+        <item>扫描头</item>
+    </string-array>
+
+    <string-array name="recognition_types">
+        <item>商品包装</item>
+        <item>票据</item>
+        <item>铭牌</item>
+        <item>通用文本</item>
+    </string-array>
+
+    <string-array name="scanner_types">
+        <item>相机</item>
+        <item>扫描头1</item>
+        <item>扫描头2</item>
+    </string-array>
+
+    <string-array name="recognition_region_modes">
+        <item>默认全图识别</item>
+        <item>自定义区域识别</item>
+    </string-array>
+</resources>

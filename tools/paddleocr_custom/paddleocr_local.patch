@@ -1,0 +1,1715 @@
+diff --git a/configs/det/PP-OCRv6/plate_det_tiny.yml b/configs/det/PP-OCRv6/plate_det_tiny.yml
+new file mode 100644
+index 0000000..03cc702
+--- /dev/null
++++ b/configs/det/PP-OCRv6/plate_det_tiny.yml
+@@ -0,0 +1,189 @@
++Global:
++  model_name: plate_det_tiny
++  debug: false
++  use_gpu: false
++  use_ema: true
++  ema_decay: 0.9998
++  ema_decay_type: threshold
++  epoch_num: &epoch_num 100
++  log_smooth_window: 20
++  print_batch_step: 10
++  save_model_dir: E:/xuhrWorkProject/floating_ocr_ai_paddle/output/plate_det_tiny
++  save_epoch_step: 10
++  eval_batch_step:
++  - 0
++  - 100
++  cal_metric_during_train: false
++  checkpoints: null
++  pretrained_model: E:/xuhrWorkProject/floating_ocr_ai_paddle/models/pretrained/detect_tiny_pretrained
++  save_inference_dir: null
++  use_visualdl: false
++  infer_img: null
++  save_res_path: E:/xuhrWorkProject/floating_ocr_ai_paddle/output/plate_det_tiny/predicts_db.txt
++  d2s_train_image_shape: [3, 640, 640]
++  distributed: false
++
++Architecture:
++  model_type: det
++  algorithm: DB
++  Transform: null
++  Backbone:
++    name: PPLCNetV4
++    det: true
++    model_size: tiny
++  Neck:
++    name: RepLKFPN
++    out_channels: 64
++    dilated_kernel_size: 5
++    shortcut: true
++  Head:
++    name: DBHead
++    k: 50
++    fix_nan: true
++    aux_in_channels: 64
++
++Loss:
++  name: DBLoss
++  main_loss_type: DiceFocalLoss
++  alpha: 5
++  beta: 10
++  focal_alpha: 0.25
++  focal_gamma: 2.5
++  aux_weight_p4: 0.2
++  aux_weight_p3: 0.3
++  aux_weight_p2: 0.4
++
++Optimizer:
++  name: Adam
++  beta1: 0.9
++  beta2: 0.999
++  lr:
++    name: Cosine
++    learning_rate: 0.001
++    warmup_epoch: 2
++  regularizer:
++    name: L2
++    factor: 1.0e-06
++
++PostProcess:
++  name: DBPostProcess
++  thresh: 0.2
++  box_thresh: 0.45
++  max_candidates: 1000
++  unclip_ratio: 1.5
++
++Metric:
++  name: DetMetric
++  main_indicator: hmean
++
++Train:
++  dataset:
++    name: SimpleDataSet
++    data_dir: E:/xuhrWorkProject/floating_ocr_ai_paddle/tools/PaddleOCR/train_det_rec/plate/det/
++    label_file_list:
++      - E:/xuhrWorkProject/floating_ocr_ai_paddle/tools/PaddleOCR/train_det_rec/plate/det_train_list.txt
++    ratio_list: [1.0]
++    transforms:
++    - DecodeImage:
++        img_mode: BGR
++        channel_first: false
++    - DetLabelEncode: null
++    - CopyPaste: null
++    - ColorJitter:
++        brightness: 0.4
++        contrast: 0.4
++        saturation: 0.7
++        hue: 0.1
++    - IaaAugment:
++        augmenter_args:
++        - type: Fliplr
++          args:
++            p: 0.5
++        - type: Affine
++          args:
++            p: 0.5
++            rotate:
++            - -15
++            - 15
++            fit_output: true
++        - type: Resize
++          args:
++            size:
++            - 0.5
++            - 1.5
++    - RandomCrop:
++        size:
++        - 640
++        - 640
++        max_tries: 50
++        keep_ratio: true
++    - MakeBorderMap:
++        shrink_ratio: 0.4
++        thresh_min: 0.3
++        thresh_max: 0.7
++        total_epoch: *epoch_num
++    - MakeShrinkMap:
++        shrink_ratio: 0.4
++        min_text_size: 8
++        total_epoch: *epoch_num
++    - NormalizeImage:
++        scale: 1./255.
++        mean:
++        - 0.485
++        - 0.456
++        - 0.406
++        std:
++        - 0.229
++        - 0.224
++        - 0.225
++        order: hwc
++    - ToCHWImage: null
++    - KeepKeys:
++        keep_keys:
++        - image
++        - threshold_map
++        - threshold_mask
++        - shrink_map
++        - shrink_mask
++  loader:
++    shuffle: true
++    drop_last: false
++    batch_size_per_card: 4
++    num_workers: 2
++
++Eval:
++  dataset:
++    name: SimpleDataSet
++    data_dir: E:/xuhrWorkProject/floating_ocr_ai_paddle/tools/PaddleOCR/train_det_rec/plate/det/
++    label_file_list:
++      - E:/xuhrWorkProject/floating_ocr_ai_paddle/tools/PaddleOCR/train_det_rec/plate/det_val_list.txt
++    transforms:
++    - DecodeImage:
++        img_mode: BGR
++        channel_first: false
++    - DetLabelEncode: null
++    - DetResizeForTest: null
++    - NormalizeImage:
++        scale: 1./255.
++        mean:
++        - 0.485
++        - 0.456
++        - 0.406
++        std:
++        - 0.229
++        - 0.224
++        - 0.225
++        order: hwc
++    - ToCHWImage: null
++    - KeepKeys:
++        keep_keys:
++        - image
++        - shape
++        - polys
++        - ignore_tags
++  loader:
++    shuffle: false
++    drop_last: false
++    batch_size_per_card: 1
++    num_workers: 1
++profiler_options: null
+diff --git a/configs/det/PP-OCRv6/plate_det_tiny_gpu.yml b/configs/det/PP-OCRv6/plate_det_tiny_gpu.yml
+new file mode 100644
+index 0000000..9bc6937
+--- /dev/null
++++ b/configs/det/PP-OCRv6/plate_det_tiny_gpu.yml
+@@ -0,0 +1,189 @@
++Global:
++  model_name: plate_det_tiny_gpu
++  debug: false
++  use_gpu: true
++  use_ema: true
++  ema_decay: 0.9998
++  ema_decay_type: threshold
++  epoch_num: &epoch_num 100
++  log_smooth_window: 20
++  print_batch_step: 10
++  save_model_dir: /data/plate_train_data/output/plate_det_tiny
++  save_epoch_step: 10
++  eval_batch_step:
++  - 0
++  - 100
++  cal_metric_during_train: false
++  checkpoints: null
++  pretrained_model: /data/plate_train_data/pretrained/detect_tiny_pretrained
++  save_inference_dir: null
++  use_visualdl: false
++  infer_img: null
++  save_res_path: /data/plate_train_data/output/plate_det_tiny/predicts_db.txt
++  d2s_train_image_shape: [3, 640, 640]
++  distributed: true
++
++Architecture:
++  model_type: det
++  algorithm: DB
++  Transform: null
++  Backbone:
++    name: PPLCNetV4
++    det: true
++    model_size: tiny
++  Neck:
++    name: RepLKFPN
++    out_channels: 64
++    dilated_kernel_size: 5
++    shortcut: true
++  Head:
++    name: DBHead
++    k: 50
++    fix_nan: true
++    aux_in_channels: 64
++
++Loss:
++  name: DBLoss
++  main_loss_type: DiceFocalLoss
++  alpha: 5
++  beta: 10
++  focal_alpha: 0.25
++  focal_gamma: 2.5
++  aux_weight_p4: 0.2
++  aux_weight_p3: 0.3
++  aux_weight_p2: 0.4
++
++Optimizer:
++  name: Adam
++  beta1: 0.9
++  beta2: 0.999
++  lr:
++    name: Cosine
++    learning_rate: 0.001
++    warmup_epoch: 2
++  regularizer:
++    name: L2
++    factor: 1.0e-06
++
++PostProcess:
++  name: DBPostProcess
++  thresh: 0.2
++  box_thresh: 0.45
++  max_candidates: 1000
++  unclip_ratio: 1.5
++
++Metric:
++  name: DetMetric
++  main_indicator: hmean
++
++Train:
++  dataset:
++    name: SimpleDataSet
++    data_dir: /
++    label_file_list:
++      - /data/plate_train_data/det_train_list.txt
++    ratio_list: [1.0]
++    transforms:
++    - DecodeImage:
++        img_mode: BGR
++        channel_first: false
++    - DetLabelEncode: null
++    - CopyPaste: null
++    - ColorJitter:
++        brightness: 0.4
++        contrast: 0.4
++        saturation: 0.7
++        hue: 0.1
++    - IaaAugment:
++        augmenter_args:
++        - type: Fliplr
++          args:
++            p: 0.5
++        - type: Affine
++          args:
++            p: 0.5
++            rotate:
++            - -15
++            - 15
++            fit_output: true
++        - type: Resize
++          args:
++            size:
++            - 0.5
++            - 1.5
++    - RandomCrop:
++        size:
++        - 640
++        - 640
++        max_tries: 50
++        keep_ratio: true
++    - MakeBorderMap:
++        shrink_ratio: 0.4
++        thresh_min: 0.3
++        thresh_max: 0.7
++        total_epoch: *epoch_num
++    - MakeShrinkMap:
++        shrink_ratio: 0.4
++        min_text_size: 8
++        total_epoch: *epoch_num
++    - NormalizeImage:
++        scale: 1./255.
++        mean:
++        - 0.485
++        - 0.456
++        - 0.406
++        std:
++        - 0.229
++        - 0.224
++        - 0.225
++        order: hwc
++    - ToCHWImage: null
++    - KeepKeys:
++        keep_keys:
++        - image
++        - threshold_map
++        - threshold_mask
++        - shrink_map
++        - shrink_mask
++  loader:
++    shuffle: true
++    drop_last: false
++    batch_size_per_card: 4
++    num_workers: 4
++
++Eval:
++  dataset:
++    name: SimpleDataSet
++    data_dir: /
++    label_file_list:
++      - /data/plate_train_data/det_val_list.txt
++    transforms:
++    - DecodeImage:
++        img_mode: BGR
++        channel_first: false
++    - DetLabelEncode: null
++    - DetResizeForTest: null
++    - NormalizeImage:
++        scale: 1./255.
++        mean:
++        - 0.485
++        - 0.456
++        - 0.406
++        std:
++        - 0.229
++        - 0.224
++        - 0.225
++        order: hwc
++    - ToCHWImage: null
++    - KeepKeys:
++        keep_keys:
++        - image
++        - shape
++        - polys
++        - ignore_tags
++  loader:
++    shuffle: false
++    drop_last: false
++    batch_size_per_card: 1
++    num_workers: 2
++profiler_options: null
+diff --git a/configs/det/PP-OCRv6/stamp_det_tiny.yml b/configs/det/PP-OCRv6/stamp_det_tiny.yml
+new file mode 100644
+index 0000000..89f0353
+--- /dev/null
++++ b/configs/det/PP-OCRv6/stamp_det_tiny.yml
+@@ -0,0 +1,184 @@
++Global:
++  model_name: PP-OCRv6_tiny_det
++  debug: false
++  use_gpu: false
++  use_ema: true
++  ema_decay: 0.9997
++  ema_decay_type: threshold
++  epoch_num: &epoch_num 40
++  log_smooth_window: 20
++  print_batch_step: 10
++  save_model_dir: E:/xuhrWorkProject/floating_ocr_ai_paddle/output/stamp_det_tiny
++  save_epoch_step: 10
++  eval_batch_step:
++  - 0
++  - 100
++  cal_metric_during_train: false
++  checkpoints: null
++  pretrained_model: E:/xuhrWorkProject/floating_ocr_ai_paddle/models/pretrained/PP-OCRv6_small_det_pretrained
++  save_inference_dir: null
++  use_visualdl: false
++  infer_img: E:/xuhrWorkProject/floating_ocr_ai_paddle/tools/PaddleOCR/train_det_rec/det/00a05f0e08994c5ba34c483694c402dc.jpg
++  save_res_path: E:/xuhrWorkProject/floating_ocr_ai_paddle/output/stamp_det_tiny/predicts_db.txt
++  d2s_train_image_shape: [3, 640, 640]
++  distributed: false
++
++Architecture:
++  model_type: det
++  algorithm: DB
++  Transform: null
++  Backbone:
++    name: PPLCNetV4
++    det: true
++    model_size: small
++  Neck:
++    name: RepLKFPN
++    out_channels: 96
++    dilated_kernel_size: 7
++    shortcut: true
++  Head:
++    name: DBHead
++    k: 50
++    fix_nan: true
++    aux_in_channels: 96
++
++Loss:
++  name: DBLoss
++  main_loss_type: DiceFocalLoss
++  alpha: 5
++  beta: 10
++  focal_alpha: 0.25
++  focal_gamma: 2.5
++  aux_weight_p4: 0.2
++  aux_weight_p3: 0.3
++  aux_weight_p2: 0.4
++
++Optimizer:
++  name: Adam
++  beta1: 0.9
++  beta2: 0.999
++  lr:
++    name: Cosine
++    learning_rate: 0.001
++    warmup_epoch: 2
++  regularizer:
++    name: L2
++    factor: 1.0e-05
++
++PostProcess:
++  name: DBPostProcess
++  thresh: 0.2
++  box_thresh: 0.45
++  max_candidates: 3000
++  unclip_ratio: 1.5   # 适当调大膨胀系数以更完整包含钢印文字边界
++
++Metric:
++  name: DetMetric
++  main_indicator: hmean
++
++Train:
++  dataset:
++    name: SimpleDataSet
++    data_dir: E:/xuhrWorkProject/floating_ocr_ai_paddle/tools/PaddleOCR/train_det_rec/det/
++    label_file_list:
++      - E:/xuhrWorkProject/floating_ocr_ai_paddle/tools/PaddleOCR/train_det_rec/det_train_list.txt
++    ratio_list: [1.0]
++    transforms:
++    - DecodeImage:
++        img_mode: BGR
++        channel_first: false
++    - DetLabelEncode: null
++    - CopyPaste: null
++    - IaaAugment:
++        augmenter_args:
++        - type: Fliplr
++          args:
++            p: 0.5
++        - type: Affine
++          args:
++            p: 0.5
++            rotate:
++            - -45
++            - 45
++            fit_output: true
++        - type: Resize
++          args:
++            size:
++            - 0.1
++            - 2
++    - RandomCrop:
++        size:
++        - 640
++        - 640
++        max_tries: 50
++        keep_ratio: true
++    - MakeBorderMap:
++        shrink_ratio: 0.4
++        thresh_min: 0.3
++        thresh_max: 0.7
++        total_epoch: *epoch_num
++    - MakeShrinkMap:
++        shrink_ratio: 0.4
++        min_text_size: 8
++        total_epoch: *epoch_num
++    - NormalizeImage:
++        scale: 1./255.
++        mean:
++        - 0.485
++        - 0.456
++        - 0.406
++        std:
++        - 0.229
++        - 0.224
++        - 0.225
++        order: hwc
++    - ToCHWImage: null
++    - KeepKeys:
++        keep_keys:
++        - image
++        - threshold_map
++        - threshold_mask
++        - shrink_map
++        - shrink_mask
++  loader:
++    shuffle: true
++    drop_last: false
++    batch_size_per_card: 4  # 减小 batch_size 避免 CPU/GPU 内存溢出
++    num_workers: 2          # Windows 环境下降低线程数
++
++Eval:
++  dataset:
++    name: SimpleDataSet
++    data_dir: E:/xuhrWorkProject/floating_ocr_ai_paddle/tools/PaddleOCR/train_det_rec/det/
++    label_file_list:
++      - E:/xuhrWorkProject/floating_ocr_ai_paddle/tools/PaddleOCR/train_det_rec/det_val_list.txt
++    transforms:
++    - DecodeImage:
++        img_mode: BGR
++        channel_first: false
++    - DetLabelEncode: null
++    - DetResizeForTest: null
++    - NormalizeImage:
++        scale: 1./255.
++        mean:
++        - 0.485
++        - 0.456
++        - 0.406
++        std:
++        - 0.229
++        - 0.224
++        - 0.225
++        order: hwc
++    - ToCHWImage: null
++    - KeepKeys:
++        keep_keys:
++        - image
++        - shape
++        - polys
++        - ignore_tags
++  loader:
++    shuffle: false
++    drop_last: false
++    batch_size_per_card: 1
++    num_workers: 1
++profiler_options: null
+diff --git a/configs/rec/PP-OCRv6/PP-OCRv6_medium_rec.yml b/configs/rec/PP-OCRv6/PP-OCRv6_medium_rec.yml
+index d8149ed..9bc8ace 100644
+--- a/configs/rec/PP-OCRv6/PP-OCRv6_medium_rec.yml
++++ b/configs/rec/PP-OCRv6/PP-OCRv6_medium_rec.yml
+@@ -45,6 +45,7 @@ Architecture:
+     model_size: medium
+   Head:
+     name: MultiHead
++    only_ctc: True
+     head_list:
+       - CTCHead:
+           Neck:
+diff --git a/configs/rec/PP-OCRv6/PP-OCRv6_small_rec.yml b/configs/rec/PP-OCRv6/PP-OCRv6_small_rec.yml
+index cf2b417..8eff00a 100644
+--- a/configs/rec/PP-OCRv6/PP-OCRv6_small_rec.yml
++++ b/configs/rec/PP-OCRv6/PP-OCRv6_small_rec.yml
+@@ -45,6 +45,7 @@ Architecture:
+     model_size: small
+   Head:
+     name: MultiHead
++    only_ctc: True
+     head_list:
+       - CTCHead:
+           Neck:
+diff --git a/configs/rec/PP-OCRv6/PP-OCRv6_tiny_rec.yml b/configs/rec/PP-OCRv6/PP-OCRv6_tiny_rec.yml
+index c5486b8..5ac9a13 100644
+--- a/configs/rec/PP-OCRv6/PP-OCRv6_tiny_rec.yml
++++ b/configs/rec/PP-OCRv6/PP-OCRv6_tiny_rec.yml
+@@ -45,6 +45,7 @@ Architecture:
+     model_size: tiny
+   Head:
+     name: MultiHead
++    only_ctc: True
+     head_list:
+       - CTCHead:
+           Neck:
+diff --git a/configs/rec/PP-OCRv6/finetune_rec_ppocr_v6_small.yml b/configs/rec/PP-OCRv6/finetune_rec_ppocr_v6_small.yml
+new file mode 100644
+index 0000000..329626c
+--- /dev/null
++++ b/configs/rec/PP-OCRv6/finetune_rec_ppocr_v6_small.yml
+@@ -0,0 +1,125 @@
++Global:
++  model_name: PP-OCRv6_small_rec
++  debug: false
++  use_gpu: false
++  epoch_num: 50
++  log_smooth_window: 20
++  print_batch_step: 10
++  save_model_dir: ./output/finetune_v6_small
++  save_epoch_step: 5
++  eval_batch_step: [0, 50]
++  cal_metric_during_train: true
++  pretrained_model: null
++  checkpoints: null
++  save_inference_dir: null
++  use_visualdl: false
++  infer_img: doc/imgs_words/ch/word_1.jpg
++  character_dict_path: ppocr/utils/dict/ppocrv6_dict.txt
++  max_text_length: &max_text_length 25
++  infer_mode: false
++  use_space_char: true
++  distributed: false
++  save_res_path: ./output/finetune_v6_small/predicts.txt
++  d2s_train_image_shape: [3, 48, 320]
++
++Optimizer:
++  name: Adam
++  beta1: 0.9
++  beta2: 0.999
++  lr:
++    name: Cosine
++    learning_rate: 0.0005
++    warmup_epoch: 5
++  regularizer:
++    name: L2
++    factor: 3.0e-05
++
++Architecture:
++  model_type: rec
++  algorithm: SVTR_LCNet
++  Transform:
++  Backbone:
++    name: PPLCNetV4
++    model_size: small
++  Head:
++    name: MultiHead
++    head_list:
++      - CTCHead:
++          Neck:
++            name: lightsvtr
++            dims: 120
++            depth: 2
++            mlp_ratio: 2.0
++            local_kernel: 7
++          Head:
++            fc_decay: 0.00001
++      - NRTRHead:
++          nrtr_dim: 384
++          max_text_length: *max_text_length
++
++Loss:
++  name: MultiLoss
++  loss_config_list:
++    - CTCLoss:
++    - NRTRLoss:
++
++PostProcess:
++  name: CTCLabelDecode
++
++Metric:
++  name: RecMetric
++  main_indicator: acc
++
++Train:
++  dataset:
++    name: SimpleDataSet
++    data_dir: ./train_data/
++    label_file_list:
++    - ./train_data/train_list.txt
++    transforms:
++    - DecodeImage:
++        img_mode: BGR
++        channel_first: false
++    - MultiLabelEncode:
++        gtc_encode: NRTRLabelEncode
++    - RecResizeImg:
++        image_shape: [3, 48, 320]
++    - KeepKeys:
++        keep_keys:
++        - image
++        - label_ctc
++        - label_gtc
++        - length
++        - valid_ratio
++  loader:
++    shuffle: true
++    batch_size_per_card: 8
++    drop_last: true
++    num_workers: 2
++
++Eval:
++  dataset:
++    name: SimpleDataSet
++    data_dir: ./train_data/
++    label_file_list:
++    - ./train_data/train_list.txt
++    transforms:
++    - DecodeImage:
++        img_mode: BGR
++        channel_first: false
++    - MultiLabelEncode:
++        gtc_encode: NRTRLabelEncode
++    - RecResizeImg:
++        image_shape: [3, 48, 320]
++    - KeepKeys:
++        keep_keys:
++        - image
++        - label_ctc
++        - label_gtc
++        - length
++        - valid_ratio
++  loader:
++    shuffle: false
++    drop_last: false
++    batch_size_per_card: 8
++    num_workers: 2
+diff --git a/configs/rec/PP-OCRv6/plate_rec_small.yml b/configs/rec/PP-OCRv6/plate_rec_small.yml
+new file mode 100644
+index 0000000..8183225
+--- /dev/null
++++ b/configs/rec/PP-OCRv6/plate_rec_small.yml
+@@ -0,0 +1,134 @@
++Global:
++  model_name: plate_rec_small
++  debug: false
++  use_gpu: false
++  epoch_num: 100
++  log_smooth_window: 20
++  print_batch_step: 10
++  save_model_dir: E:/xuhrWorkProject/floating_ocr_ai_paddle/output/plate_rec_small
++  save_epoch_step: 10
++  eval_batch_step: [0, 200]
++  cal_metric_during_train: true
++  pretrained_model: E:/xuhrWorkProject/floating_ocr_ai_paddle/models/pretrained/PP-OCRv6_small_rec_pretrained
++  checkpoints: null
++  save_inference_dir: null
++  use_visualdl: false
++  infer_img: null
++  character_dict_path: E:/xuhrWorkProject/floating_ocr_ai_paddle/tools/PaddleOCR/train_det_rec/plate/plate_dict.txt
++  max_text_length: &max_text_length 10
++  infer_mode: false
++  use_space_char: false
++  distributed: false
++  save_res_path: E:/xuhrWorkProject/floating_ocr_ai_paddle/output/plate_rec_small/predicts.txt
++  d2s_train_image_shape: [3, 48, 160]
++
++Optimizer:
++  name: Adam
++  beta1: 0.9
++  beta2: 0.999
++  lr:
++    name: Cosine
++    learning_rate: 0.0005
++    warmup_epoch: 5
++  regularizer:
++    name: L2
++    factor: 3.0e-05
++
++Architecture:
++  model_type: rec
++  algorithm: SVTR_LCNet
++  Transform:
++  Backbone:
++    name: PPLCNetV4
++    model_size: small
++  Head:
++    name: MultiHead
++    only_ctc: true
++    head_list:
++      - CTCHead:
++          Neck:
++            name: lightsvtr
++            dims: 120
++            depth: 2
++            mlp_ratio: 2.0
++            local_kernel: 7
++          Head:
++            fc_decay: 0.00001
++      - NRTRHead:
++          nrtr_dim: 384
++          max_text_length: *max_text_length
++
++Loss:
++  name: MultiLoss
++  loss_config_list:
++    - CTCLoss:
++    - NRTRLoss:
++
++PostProcess:
++  name: CTCLabelDecode
++
++Metric:
++  name: RecMetric
++  main_indicator: acc
++
++Train:
++  dataset:
++    name: SimpleDataSet
++    data_dir: E:/xuhrWorkProject/floating_ocr_ai_paddle/tools/PaddleOCR/train_det_rec/plate/rec/
++    label_file_list:
++    - E:/xuhrWorkProject/floating_ocr_ai_paddle/tools/PaddleOCR/train_det_rec/plate/rec_train_list.txt
++    transforms:
++    - DecodeImage:
++        img_mode: BGR
++        channel_first: false
++    - RecAug:
++        tia_prob: 0.4
++        crop_prob: 0.4
++        reverse_prob: 0.0
++        noise_prob: 0.5
++        jitter_prob: 0.4
++        blur_prob: 0.4
++        hsv_aug_prob: 0.4
++    - MultiLabelEncode:
++        gtc_encode: NRTRLabelEncode
++    - RecResizeImg:
++        image_shape: [3, 48, 160]
++    - KeepKeys:
++        keep_keys:
++        - image
++        - label_ctc
++        - label_gtc
++        - length
++        - valid_ratio
++  loader:
++    shuffle: true
++    batch_size_per_card: 16
++    drop_last: true
++    num_workers: 2
++
++Eval:
++  dataset:
++    name: SimpleDataSet
++    data_dir: E:/xuhrWorkProject/floating_ocr_ai_paddle/tools/PaddleOCR/train_det_rec/plate/rec/
++    label_file_list:
++    - E:/xuhrWorkProject/floating_ocr_ai_paddle/tools/PaddleOCR/train_det_rec/plate/rec_val_list.txt
++    transforms:
++    - DecodeImage:
++        img_mode: BGR
++        channel_first: false
++    - MultiLabelEncode:
++        gtc_encode: NRTRLabelEncode
++    - RecResizeImg:
++        image_shape: [3, 48, 160]
++    - KeepKeys:
++        keep_keys:
++        - image
++        - label_ctc
++        - label_gtc
++        - length
++        - valid_ratio
++  loader:
++    shuffle: false
++    drop_last: false
++    batch_size_per_card: 16
++    num_workers: 1
+diff --git a/configs/rec/PP-OCRv6/plate_rec_small_gpu.yml b/configs/rec/PP-OCRv6/plate_rec_small_gpu.yml
+new file mode 100644
+index 0000000..1f413e9
+--- /dev/null
++++ b/configs/rec/PP-OCRv6/plate_rec_small_gpu.yml
+@@ -0,0 +1,133 @@
++Global:
++  model_name: plate_rec_small_gpu
++  debug: false
++  use_gpu: true
++  epoch_num: 100
++  log_smooth_window: 20
++  print_batch_step: 10
++  save_model_dir: /data/plate_train_data/output/plate_rec_small
++  save_epoch_step: 10
++  eval_batch_step: [0, 200]
++  cal_metric_during_train: true
++  pretrained_model: /data/plate_train_data/pretrained/PP-OCRv6_small_rec_pretrained
++  checkpoints: null
++  save_inference_dir: null
++  use_visualdl: false
++  infer_img: null
++  character_dict_path: /data/plate_train_data/plate_dict.txt
++  max_text_length: &max_text_length 10
++  infer_mode: false
++  use_space_char: false
++  distributed: true
++  save_res_path: /data/plate_train_data/output/plate_rec_small/predicts.txt
++  d2s_train_image_shape: [3, 48, 160]
++
++Optimizer:
++  name: Adam
++  beta1: 0.9
++  beta2: 0.999
++  lr:
++    name: Cosine
++    learning_rate: 0.0005
++    warmup_epoch: 5
++  regularizer:
++    name: L2
++    factor: 3.0e-05
++
++Architecture:
++  model_type: rec
++  algorithm: SVTR_LCNet
++  Transform:
++  Backbone:
++    name: PPLCNetV4
++    model_size: small
++  Head:
++    name: MultiHead
++    head_list:
++      - CTCHead:
++          Neck:
++            name: lightsvtr
++            dims: 120
++            depth: 2
++            mlp_ratio: 2.0
++            local_kernel: 7
++          Head:
++            fc_decay: 0.00001
++      - NRTRHead:
++          nrtr_dim: 384
++          max_text_length: *max_text_length
++
++Loss:
++  name: MultiLoss
++  loss_config_list:
++    - CTCLoss:
++    - NRTRLoss:
++
++PostProcess:
++  name: CTCLabelDecode
++
++Metric:
++  name: RecMetric
++  main_indicator: acc
++
++Train:
++  dataset:
++    name: SimpleDataSet
++    data_dir: /data/plate_train_data/rec/
++    label_file_list:
++    - /data/plate_train_data/rec_train_list.txt
++    transforms:
++    - DecodeImage:
++        img_mode: BGR
++        channel_first: false
++    - RecAug:
++        tia_prob: 0.4
++        crop_prob: 0.4
++        reverse_prob: 0.0
++        noise_prob: 0.5
++        jitter_prob: 0.4
++        blur_prob: 0.4
++        hsv_aug_prob: 0.4
++    - MultiLabelEncode:
++        gtc_encode: NRTRLabelEncode
++    - RecResizeImg:
++        image_shape: [3, 48, 160]
++    - KeepKeys:
++        keep_keys:
++        - image
++        - label_ctc
++        - label_gtc
++        - length
++        - valid_ratio
++  loader:
++    shuffle: true
++    batch_size_per_card: 64
++    drop_last: true
++    num_workers: 4
++
++Eval:
++  dataset:
++    name: SimpleDataSet
++    data_dir: /data/plate_train_data/rec/
++    label_file_list:
++    - /data/plate_train_data/rec_val_list.txt
++    transforms:
++    - DecodeImage:
++        img_mode: BGR
++        channel_first: false
++    - MultiLabelEncode:
++        gtc_encode: NRTRLabelEncode
++    - RecResizeImg:
++        image_shape: [3, 48, 160]
++    - KeepKeys:
++        keep_keys:
++        - image
++        - label_ctc
++        - label_gtc
++        - length
++        - valid_ratio
++  loader:
++    shuffle: false
++    drop_last: false
++    batch_size_per_card: 64
++    num_workers: 2
+diff --git a/configs/rec/PP-OCRv6/stamp_rec_small.yml b/configs/rec/PP-OCRv6/stamp_rec_small.yml
+new file mode 100644
+index 0000000..527c7e6
+--- /dev/null
++++ b/configs/rec/PP-OCRv6/stamp_rec_small.yml
+@@ -0,0 +1,133 @@
++Global:
++  model_name: PP-OCRv6_small_rec
++  debug: false
++  use_gpu: false
++  epoch_num: 100
++  log_smooth_window: 20
++  print_batch_step: 10
++  save_model_dir: E:/xuhrWorkProject/floating_ocr_ai_paddle/output/stamp_rec_small
++  save_epoch_step: 10
++  eval_batch_step: [0, 200]
++  cal_metric_during_train: true
++  pretrained_model: E:/xuhrWorkProject/floating_ocr_ai_paddle/models/pretrained/PP-OCRv6_small_rec_pretrained
++  checkpoints: null
++  save_inference_dir: null
++  use_visualdl: false
++  infer_img: E:/xuhrWorkProject/floating_ocr_ai_paddle/tools/PaddleOCR/train_det_rec/rec/707177958061772800/100_0.jpg
++  character_dict_path: E:/xuhrWorkProject/floating_ocr_ai_paddle/tools/PaddleOCR/train_det_rec/stamp_dict.txt
++  max_text_length: &max_text_length 25
++  infer_mode: false
++  use_space_char: true
++  distributed: false
++  save_res_path: E:/xuhrWorkProject/floating_ocr_ai_paddle/output/stamp_rec_small/predicts.txt
++  d2s_train_image_shape: [3, 48, 320]
++
++Optimizer:
++  name: Adam
++  beta1: 0.9
++  beta2: 0.999
++  lr:
++    name: Cosine
++    learning_rate: 0.0005
++    warmup_epoch: 5
++  regularizer:
++    name: L2
++    factor: 3.0e-05
++
++Architecture:
++  model_type: rec
++  algorithm: SVTR_LCNet
++  Transform:
++  Backbone:
++    name: PPLCNetV4
++    model_size: small
++  Head:
++    name: MultiHead
++    head_list:
++      - CTCHead:
++          Neck:
++            name: lightsvtr
++            dims: 120
++            depth: 2
++            mlp_ratio: 2.0
++            local_kernel: 7
++          Head:
++            fc_decay: 0.00001
++      - NRTRHead:
++          nrtr_dim: 384
++          max_text_length: *max_text_length
++
++Loss:
++  name: MultiLoss
++  loss_config_list:
++    - CTCLoss:
++    - NRTRLoss:
++
++PostProcess:
++  name: CTCLabelDecode
++
++Metric:
++  name: RecMetric
++  main_indicator: acc
++
++Train:
++  dataset:
++    name: SimpleDataSet
++    data_dir: E:/xuhrWorkProject/floating_ocr_ai_paddle/tools/PaddleOCR/train_det_rec/rec/
++    label_file_list:
++    - E:/xuhrWorkProject/floating_ocr_ai_paddle/tools/PaddleOCR/train_det_rec/rec_train_list.txt
++    transforms:
++    - DecodeImage:
++        img_mode: BGR
++        channel_first: false
++    - RecAug:
++        tia_prob: 0.5
++        crop_prob: 0.4
++        reverse_prob: 0.4
++        noise_prob: 0.6
++        jitter_prob: 0.5
++        blur_prob: 0.5
++        hsv_aug_prob: 0.6
++    - MultiLabelEncode:
++        gtc_encode: NRTRLabelEncode
++    - RecResizeImg:
++        image_shape: [3, 48, 320]
++    - KeepKeys:
++        keep_keys:
++        - image
++        - label_ctc
++        - label_gtc
++        - length
++        - valid_ratio
++  loader:
++    shuffle: true
++    batch_size_per_card: 16
++    drop_last: true
++    num_workers: 2
++
++Eval:
++  dataset:
++    name: SimpleDataSet
++    data_dir: E:/xuhrWorkProject/floating_ocr_ai_paddle/tools/PaddleOCR/train_det_rec/rec/
++    label_file_list:
++    - E:/xuhrWorkProject/floating_ocr_ai_paddle/tools/PaddleOCR/train_det_rec/rec_val_list.txt
++    transforms:
++    - DecodeImage:
++        img_mode: BGR
++        channel_first: false
++    - MultiLabelEncode:
++        gtc_encode: NRTRLabelEncode
++    - RecResizeImg:
++        image_shape: [3, 48, 320]
++    - KeepKeys:
++        keep_keys:
++        - image
++        - label_ctc
++        - label_gtc
++        - length
++        - valid_ratio
++  loader:
++    shuffle: false
++    drop_last: false
++    batch_size_per_card: 16
++    num_workers: 1
+diff --git a/configs/rec/finetune_vincode.yml b/configs/rec/finetune_vincode.yml
+new file mode 100644
+index 0000000..e3341a6
+--- /dev/null
++++ b/configs/rec/finetune_vincode.yml
+@@ -0,0 +1,95 @@
++Global:
++  use_gpu: false
++  epoch_num: 150
++  log_smooth_window: 20
++  print_batch_step: 10
++  save_model_dir: ./output/finetune_vincode
++  save_epoch_step: 10
++  eval_batch_step: [0, 50]
++  cal_metric_during_train: true
++  pretrained_model: null
++  checkpoints: null
++  export_inference: false
++  use_visualdl: false
++  infer_img: doc/imgs_words_en/word_12.png
++  character_dict_path: ppocr/utils/dict/vincode_full.txt
++  max_text_length: &max_text_length 25
++  use_space_char: false
++  drop_last: true
++
++Optimizer:
++  name: Adam
++  beta1: 0.9
++  beta2: 0.999
++  clip_norm: 5.0
++  lr:
++    name: Cosine
++    learning_rate: 0.001
++    warmup_epoch: 5
++
++Architecture:
++  model_type: rec
++  algorithm: CRNN
++  Transform: null
++  Backbone:
++    name: MobileNetV3
++    scale: 0.5
++    model_name: small
++    small_stride: [1, 2, 2, 2]
++  Neck:
++    name: SequenceEncoder
++    encoder_type: rnn
++    hidden_size: 96
++  Head:
++    name: CTCHead
++    fc_decay: 0.00001
++
++Loss:
++  name: CTCLoss
++
++PostProcess:
++  name: CTCLabelDecode
++
++Metric:
++  name: RecMetric
++  main_indicator: acc
++
++Train:
++  dataset:
++    name: SimpleDataSet
++    data_dir: ./train_data/
++    label_file_list: ["./train_data/train_list.txt"]
++    transforms:
++      - DecodeImage:
++          img_mode: BGR
++          channel_first: false
++      - CTCLabelEncode: null
++      - RecResizeImg:
++          image_shape: [3, 32, 320]
++      - KeepKeys:
++          keep_keys: ['image', 'label', 'length']
++  loader:
++    shuffle: true
++    batch_size_per_card: 8
++    drop_last: true
++    num_workers: 2
++
++Eval:
++  dataset:
++    name: SimpleDataSet
++    data_dir: ./train_data/
++    label_file_list: ["./train_data/train_list.txt"]
++    transforms:
++      - DecodeImage:
++          img_mode: BGR
++          channel_first: false
++      - CTCLabelEncode: null
++      - RecResizeImg:
++          image_shape: [3, 32, 320]
++      - KeepKeys:
++          keep_keys: ['image', 'label', 'length']
++  loader:
++    shuffle: false
++    drop_last: false
++    batch_size_per_card: 8
++    num_workers: 2
+diff --git a/configs/rec/vincode_rec_test.yml b/configs/rec/vincode_rec_test.yml
+new file mode 100644
+index 0000000..8db6709
+--- /dev/null
++++ b/configs/rec/vincode_rec_test.yml
+@@ -0,0 +1,96 @@
++Global:
++  use_gpu: False
++  epoch_num: 80
++  log_smooth_window: 20
++  print_batch_step: 5
++  save_model_dir: ./output/vincode_rec_test
++  save_epoch_step: 20
++  eval_batch_step: [0, 20]
++  cal_metric_during_train: True
++  pretrained_model:
++  checkpoints:
++  save_inference_dir:
++  use_visualdl: False
++  infer_img: E:/xuhrWorkProject/floating_ocr_ai_paddle/img/tessdata_train/017c3a4025bd472d90e855d9b62ee903_1_1652407464.jpg
++  character_dict_path: E:/xuhrWorkProject/floating_ocr_ai_paddle/img/paddle_rec_train/vincode_dict.txt
++  max_text_length: 25
++  infer_mode: False
++  use_space_char: False
++  save_res_path: ./output/vincode_rec_test/predicts.txt
++
++Optimizer:
++  name: Adam
++  beta1: 0.9
++  beta2: 0.999
++  lr:
++    learning_rate: 0.0005
++  regularizer:
++    name: L2
++    factor: 0
++
++Architecture:
++  model_type: rec
++  algorithm: Rosetta
++  Transform:
++  Backbone:
++    name: MobileNetV3
++    scale: 0.5
++    model_name: large
++  Neck:
++    name: SequenceEncoder
++    encoder_type: reshape
++  Head:
++    name: CTCHead
++    fc_decay: 0.0004
++
++Loss:
++  name: CTCLoss
++
++PostProcess:
++  name: CTCLabelDecode
++
++Metric:
++  name: RecMetric
++  main_indicator: acc
++
++Train:
++  dataset:
++    name: SimpleDataSet
++    data_dir: E:/xuhrWorkProject/floating_ocr_ai_paddle
++    label_file_list:
++      - E:/xuhrWorkProject/floating_ocr_ai_paddle/img/paddle_rec_train/train_list.txt
++    transforms:
++      - DecodeImage:
++          img_mode: BGR
++          channel_first: False
++      - CTCLabelEncode:
++      - RecResizeImg:
++          image_shape: [3, 32, 320]
++      - KeepKeys:
++          keep_keys: ['image', 'label', 'length']
++  loader:
++    shuffle: True
++    batch_size_per_card: 8
++    drop_last: True
++    num_workers: 0
++
++Eval:
++  dataset:
++    name: SimpleDataSet
++    data_dir: E:/xuhrWorkProject/floating_ocr_ai_paddle
++    label_file_list:
++      - E:/xuhrWorkProject/floating_ocr_ai_paddle/img/paddle_rec_train/val_list.txt
++    transforms:
++      - DecodeImage:
++          img_mode: BGR
++          channel_first: False
++      - CTCLabelEncode:
++      - RecResizeImg:
++          image_shape: [3, 32, 320]
++      - KeepKeys:
++          keep_keys: ['image', 'label', 'length']
++  loader:
++    shuffle: False
++    drop_last: False
++    batch_size_per_card: 8
++    num_workers: 0
+diff --git a/docs/version2.x/legacy/paddle_server.en.md b/docs/version2.x/legacy/paddle_server.en.md
+index 0777858..5c672d4 100644
+--- a/docs/version2.x/legacy/paddle_server.en.md
++++ b/docs/version2.x/legacy/paddle_server.en.md
+@@ -132,8 +132,8 @@ The recognition model is the same.
+ 2. Run the following command to start the service.
+ 
+     ```bash linenums="1"
+-    # Start the service and save the running log in log.txt
+-    python3 web_service.py --config=config.yml &>log.txt &
++    # Start the service and save the running log in log1.txt
++    python3 web_service.py --config=config.yml &>log1.txt &
+     ```
+ 
+     After the service is successfully started, a log similar to the following will be printed in log.txt
+@@ -216,8 +216,8 @@ The C++ service deployment is the same as python in the environment setup and da
+ 2. Run the following command to start the service.
+ 
+     ```bash linenums="1"
+-    # Start the service and save the running log in log.txt
+-    python3 -m paddle_serving_server.serve --model ppocr_det_v3_serving ppocr_rec_v3_serving --op GeneralDetectionOp GeneralInferOp --port 8181 &>log.txt &
++    # Start the service and save the running log in log1.txt
++    python3 -m paddle_serving_server.serve --model ppocr_det_v3_serving ppocr_rec_v3_serving --op GeneralDetectionOp GeneralInferOp --port 8181 &>log1.txt &
+     ```
+ 
+     After the service is successfully started, a log similar to the following will be printed in log.txt
+diff --git a/docs/version2.x/legacy/paddle_server.md b/docs/version2.x/legacy/paddle_server.md
+index 52b1783..00bef6e 100644
+--- a/docs/version2.x/legacy/paddle_server.md
++++ b/docs/version2.x/legacy/paddle_server.md
+@@ -133,7 +133,7 @@ web_service.py        # 启动pipeline服务端的脚本
+ 
+ ```bash linenums="1"
+ # 启动服务，运行日志保存在log.txt
+-python3 web_service.py --config=config.yml &>log.txt &
++python3 web_service.py --config=config.yml &>log1.txt &
+ ```
+ 
+ 成功启动服务后，log.txt中会打印类似如下日志
+@@ -232,7 +232,7 @@ cp -rf general_detection_op.cpp Serving/core/general-server/op
+ 
+ ```bash linenums="1"
+ # 启动服务，运行日志保存在log.txt
+-python3 -m paddle_serving_server.serve --model ppocr_det_v3_serving ppocr_rec_v3_serving --op GeneralDetectionOp GeneralInferOp --port 8181 &>log.txt &
++python3 -m paddle_serving_server.serve --model ppocr_det_v3_serving ppocr_rec_v3_serving --op GeneralDetectionOp GeneralInferOp --port 8181 &>log1.txt &
+ ```
+ 
+ 成功启动服务后，log.txt中会打印类似如下日志
+diff --git a/plate/plate_dict.txt b/plate/plate_dict.txt
+new file mode 100644
+index 0000000..1642d96
+--- /dev/null
++++ b/plate/plate_dict.txt
+@@ -0,0 +1,75 @@
++京
++津
++沪
++渝
++冀
++豫
++云
++辽
++黑
++湘
++皖
++鲁
++新
++苏
++浙
++赣
++鄂
++桂
++甘
++晋
++蒙
++陕
++吉
++闽
++贵
++粤
++青
++藏
++川
++宁
++琼
++A
++B
++C
++D
++E
++F
++G
++H
++I
++J
++K
++L
++M
++N
++O
++P
++Q
++R
++S
++T
++U
++V
++W
++X
++Y
++Z
++0
++1
++2
++3
++4
++5
++6
++7
++8
++9
++挂
++学
++警
++领
++港
++澳
++使
++超
+diff --git a/ppocr/data/imaug/__init__.py b/ppocr/data/imaug/__init__.py
+index 06ac51a..d2f8fc2 100644
+--- a/ppocr/data/imaug/__init__.py
++++ b/ppocr/data/imaug/__init__.py
+@@ -16,7 +16,10 @@ from __future__ import division
+ from __future__ import print_function
+ from __future__ import unicode_literals
+ 
+-from .iaa_augment import IaaAugment
++try:
++    from .iaa_augment import IaaAugment
++except ImportError:
++    IaaAugment = None
+ from .make_border_map import MakeBorderMap
+ from .make_shrink_map import MakeShrinkMap
+ from .random_crop_data import EastRandomCropData, RandomCrop, RandomCropImgMask
+diff --git a/ppocr/data/imaug/iaa_augment.py b/ppocr/data/imaug/iaa_augment.py
+index 4b2c67f..42b7cb2 100644
+--- a/ppocr/data/imaug/iaa_augment.py
++++ b/ppocr/data/imaug/iaa_augment.py
+@@ -21,13 +21,22 @@ import os
+ os.environ["NO_ALBUMENTATIONS_UPDATE"] = "1"
+ 
+ import numpy as np
+-import albumentations as A
+-from albumentations.core.transforms_interface import DualTransform
+-from albumentations.augmentations.geometric import functional as fgeometric
+ from packaging import version
+ 
+-ALBU_VERSION = version.parse(A.__version__)
+-IS_ALBU_NEW_VERSION = ALBU_VERSION >= version.parse("1.4.15")
++try:
++    import albumentations as A
++    from albumentations.core.transforms_interface import DualTransform
++    from albumentations.augmentations.geometric import functional as fgeometric
++    ALBU_VERSION = version.parse(A.__version__)
++    IS_ALBU_NEW_VERSION = ALBU_VERSION >= version.parse("1.4.15")
++except ImportError:
++    A = None
++    class DualTransform(object):
++        def __init__(self, *args, **kwargs):
++            pass
++    fgeometric = None
++    ALBU_VERSION = version.parse("1.0.0")
++    IS_ALBU_NEW_VERSION = False
+ 
+ 
+ # Custom resize transformation mimicking Imgaug's behavior with scaling
+diff --git a/ppocr/modeling/heads/rec_ctc_head.py b/ppocr/modeling/heads/rec_ctc_head.py
+index 565f167..6780d5b 100755
+--- a/ppocr/modeling/heads/rec_ctc_head.py
++++ b/ppocr/modeling/heads/rec_ctc_head.py
+@@ -45,6 +45,7 @@ class CTCHead(nn.Layer):
+     ):
+         super(CTCHead, self).__init__()
+         self.use_guide = use_guide
++        self.only_ctc = kwargs.get("only_ctc", False)
+         if use_guide:
+             self.guide_layer = nn.Sequential(
+                 nn.Conv1D(
+@@ -114,7 +115,8 @@ class CTCHead(nn.Layer):
+         else:
+             result = predicts
+         if not self.training:
+-            predicts = F.softmax(predicts, axis=2)
++            if not self.only_ctc:
++                predicts = F.softmax(predicts, axis=2)
+             result = predicts
+ 
+         return result
+diff --git a/ppocr/modeling/heads/rec_multi_head.py b/ppocr/modeling/heads/rec_multi_head.py
+index be44615..b177ed2 100644
+--- a/ppocr/modeling/heads/rec_multi_head.py
++++ b/ppocr/modeling/heads/rec_multi_head.py
+@@ -71,13 +71,17 @@ class MultiHead(nn.Layer):
+         self.use_pool = kwargs.get("use_pool", False)
+         self.use_pos = kwargs.get("use_pos", False)
+         self.in_channels = in_channels
++        self.only_ctc = kwargs.get("only_ctc", False)
+         if self.use_pool:
+             self.pool = nn.AvgPool2D(kernel_size=[3, 2], stride=[3, 2], padding=0)
+         self.gtc_head = "sar"
+-        assert len(self.head_list) >= 2
++        if not self.only_ctc:
++            assert len(self.head_list) >= 2
+         for idx, head_name in enumerate(self.head_list):
+             name = list(head_name)[0]
+             if name == "SARHead":
++                if self.only_ctc:
++                    continue
+                 # sar head
+                 sar_args = self.head_list[idx][name]
+                 self.sar_head = eval(name)(
+@@ -86,6 +90,8 @@ class MultiHead(nn.Layer):
+                     **sar_args,
+                 )
+             elif name == "NRTRHead":
++                if self.only_ctc:
++                    continue
+                 gtc_args = self.head_list[idx][name]
+                 max_text_length = gtc_args.get("max_text_length", 25)
+                 nrtr_dim = gtc_args.get("nrtr_dim", 256)
+@@ -124,6 +130,7 @@ class MultiHead(nn.Layer):
+                 self.ctc_head = eval(name)(
+                     in_channels=self.ctc_encoder.out_channels,
+                     out_channels=out_channels_list["CTCLabelDecode"],
++                    only_ctc=self.only_ctc,
+                     **head_args,
+                 )
+             else:
+@@ -141,8 +148,8 @@ class MultiHead(nn.Layer):
+         head_out = dict()
+         head_out["ctc"] = ctc_out
+         head_out["ctc_neck"] = ctc_encoder
+-        # eval mode
+-        if not self.training:
++        # eval mode or only_ctc mode
++        if not self.training or self.only_ctc:
+             return ctc_out
+         if self.gtc_head == "sar":
+             sar_out = self.sar_head(x, targets[1:])
+diff --git a/ppocr/utils/dict/vincode_full.txt b/ppocr/utils/dict/vincode_full.txt
+new file mode 100644
+index 0000000..6048b4c
+--- /dev/null
++++ b/ppocr/utils/dict/vincode_full.txt
+@@ -0,0 +1,12 @@
++0
++1
++2
++3
++4
++5
++6
++7
++8
++9
++:
++A
+\ No newline at end of file
+diff --git a/ppocr/utils/ema.py b/ppocr/utils/ema.py
+index b127f67..f963bd7 100644
+--- a/ppocr/utils/ema.py
++++ b/ppocr/utils/ema.py
+@@ -51,6 +51,7 @@ class ModelEMA:
+         self.ema_decay_type = ema_decay_type
+         self.step = 0
+         self._decay = decay
++        self.model = model
+ 
+         # Build black list: frozen params (excluding BN running stats)
+         self.ema_black_list = set()
+@@ -98,18 +99,19 @@ class ModelEMA:
+ 
+         Does NOT modify internal state.
+         """
+-        if self.step == 0:
+-            return {k: v.clone() for k, v in self.state_dict.items()}
+         state = {}
++        model_dict = self.model.state_dict() if hasattr(self, "model") and self.model is not None else {}
+         for k, v in self.state_dict.items():
+             if k in self.ema_black_list:
+                 state[k] = v
+             else:
+-                if self.ema_decay_type != "exponential":
++                if self.step > 0 and self.ema_decay_type != "exponential":
+                     # threshold / normal need bias-correction
+                     v = v / (1 - self._decay**self.step)
+                 v = v.clone()
+                 v.stop_gradient = True
++                if k in model_dict and v.dtype != model_dict[k].dtype:
++                    v = v.astype(model_dict[k].dtype)
+                 state[k] = v
+         return state
+ 
+diff --git a/ppocr/utils/export_model.py b/ppocr/utils/export_model.py
+index e5edb04..b805b1e 100644
+--- a/ppocr/utils/export_model.py
++++ b/ppocr/utils/export_model.py
+@@ -382,7 +382,11 @@ def export_single_model(
+         ):  # Encryption is not needed if the module cannot be imported
+             print("Skipping import of the encryption module")
+         paddle_version = version.parse(paddle.__version__)
+-        if config["Global"].get("export_with_pir", True):
++        default_export_with_pir = (
++            paddle_version >= version.parse("3.0.0b2")
++            or paddle_version == version.parse("0.0.0")
++        )
++        if config["Global"].get("export_with_pir", default_export_with_pir):
+             assert (
+                 paddle_version >= version.parse("3.0.0b2")
+                 or paddle_version == version.parse("0.0.0")
+diff --git a/tools/export_model.py b/tools/export_model.py
+index da1bcbb..3b15b33 100755
+--- a/tools/export_model.py
++++ b/tools/export_model.py
+@@ -14,6 +14,21 @@
+ 
+ import os
+ import sys
++from types import ModuleType
++
++# Mock albumentations for export environment
++dummy_albu = ModuleType("albumentations")
++dummy_albu.Compose = lambda *args, **kwargs: None
++dummy_albu.KeypointParams = lambda *args, **kwargs: None
++dummy_albu.DualTransform = object
++dummy_albu.ImageOnlyTransform = object
++dummy_albu.__version__ = "1.0.0"
++sys.modules["albumentations"] = dummy_albu
++sys.modules["albumentations.core"] = dummy_albu
++sys.modules["albumentations.core.transforms_interface"] = dummy_albu
++sys.modules["albumentations.augmentations"] = dummy_albu
++sys.modules["albumentations.augmentations.geometric"] = dummy_albu
++sys.modules["albumentations.augmentations.geometric.functional"] = dummy_albu
+ 
+ __dir__ = os.path.dirname(os.path.abspath(__file__))
+ sys.path.append(__dir__)

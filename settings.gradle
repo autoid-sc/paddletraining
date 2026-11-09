@@ -1,0 +1,2 @@
+rootProject.name='floating_ocr_ai_paddle'
+include ':app', ':openCVLibrary345'

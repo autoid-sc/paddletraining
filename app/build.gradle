@@ -1,0 +1,142 @@
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+    id 'kotlin-parcelize'
+}
+
+static def releaseTime() {
+    return new Date().format("yy.MMddHH", TimeZone.getTimeZone("GMT+8"))
+}
+
+def name = "seuic_ocr_floating"
+def version = releaseTime()
+
+android {
+    namespace 'com.seuic.floating'
+    compileSdk 34
+    kotlinOptions {
+        jvmTarget = "11"
+    }
+
+    defaultConfig {
+        applicationId "com.seuic.floating"
+        minSdk 24
+        targetSdk 28
+        versionCode 1
+        versionName version
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
+
+        // 支持 armeabi-v7a 和 arm64-v8a 架构
+        ndk {
+            abiFilters 'armeabi-v7a', 'arm64-v8a'
+        }
+    }
+
+    signingConfigs {
+        release {
+            storeFile file(KEY_PATH)
+            storePassword STORE_PASSWORD
+            keyAlias = KEY_ALIAS
+            keyPassword = KEY_PASSWORD
+        }
+    }
+
+    buildFeatures {
+        dataBinding = true
+        viewBinding = true
+    }
+
+    buildTypes {
+        debug {
+            debuggable true
+            signingConfig signingConfigs.release
+        }
+        release {
+            applicationIdSuffix '.release'
+            minifyEnabled true
+            shrinkResources true
+            signingConfig signingConfigs.release
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    applicationVariants.all { variant ->
+        variant.outputs.all {
+            outputFileName = "${name}_${defaultConfig.versionName}_${defaultConfig.versionCode}_${variant.buildType.name}.apk"
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+
+    lintOptions {
+        checkDependencies true
+        checkReleaseBuilds false
+        abortOnError false
+    }
+
+    packagingOptions {
+        // 打包 libc++_shared.so
+        jniLibs.useLegacyPackaging = false
+        pickFirst '**/libc++_shared.so'
+        pickFirst '**/libpaddle_lite_jni.so'
+        pickFirst '**/libpaddle_light_api_shared.so'
+    }
+}
+
+// 强制统一 Kotlin 标准库版本
+configurations.all {
+    resolutionStrategy {
+        force 'org.jetbrains.kotlin:kotlin-stdlib:1.7.10'
+        force 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.10'
+        force 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.7.10'
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
+
+    // AndroidX 核心库
+    implementation 'androidx.core:core-ktx:1.12.0'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.6.2'
+    implementation 'androidx.cardview:cardview:1.0.0'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.0'
+    implementation 'androidx.recyclerview:recyclerview:1.2.1'
+    implementation 'com.google.android.material:material:1.2.0'
+    implementation 'androidx.multidex:multidex:2.0.1'
+
+    // 网络请求相关
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    implementation 'com.squareup.okhttp3:okhttp:4.9.1'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.9.1'
+
+    // 协程支持
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
+
+    // CameraX 相机库
+    implementation 'androidx.camera:camera-core:1.0.1'
+    implementation 'androidx.camera:camera-camera2:1.0.1'
+    implementation 'androidx.camera:camera-lifecycle:1.0.1'
+    implementation 'androidx.camera:camera-extensions:1.0.0-alpha28'
+    implementation 'androidx.camera:camera-view:1.0.0-alpha28'
+
+    // 第三方库
+    implementation 'io.github.bookzhan:bzyuv:1.1.17@aar'
+    implementation 'com.seuic.core:seuic_core:1.0.2'
+    implementation 'com.seuic.util:commonlib:1.1.0'
+
+    // OpenCV
+    implementation project(path: ':openCVLibrary345')
+
+    // Scanner API (如果需要)
+    implementation files('libs/ScannerAPI.jar')
+
+    // PaddleLite
+    implementation files('libs/PaddlePredictor.jar')
+}
